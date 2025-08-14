@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banglish Compiler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            height: 600px;
+        }
+        
+        .editor-section, .output-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .editor-section .section-header {
+            background: #e74c3c;
+        }
+        
+        .output-section .section-header {
+            background: #27ae60;
+        }
+        
+        #code-editor {
+            flex: 1;
+            border: none;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            background: #2d3748;
+            color: #e2e8f0;
+            resize: none;
+            outline: none;
+        }
+        
+        #output {
+            flex: 1;
+            padding: 20px;
+            background: #1a202c;
+            color: #68d391;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-run {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .btn-clear {
+            background: linear-gradient(45deg, #f44336, #da190b);
+            color: white;
+        }
+        
+        .btn-example {
+            background: linear-gradient(45deg, #2196F3, #0b7dda);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .syntax-help {
+            background: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            #code-editor, #output {
+                height: 300px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Banglish Compiler</h1>
+            <p>Bengali + English Mixed Programming Language</p>
+        </div>
+        
+        <div class="syntax-help">
+            <strong>📝 Syntax Guide:</strong><br>
+            • Variables: <code>dhori x = 5</code> (declare variable)<br>
+            • Print: <code>dekhao x</code> (show/print)<br>
+            • If-else: <code>jodi (condition) tahole { } nahole { }</code><br>
+            • Operators: <code>+, -, *, /, %, ==, !=, <, >, <=, >=</code><br>
+            • Comments: <code>// eta comment</code>
+        </div>
+        
+        <div class="main-content">
+            <div class="editor-section">
+                <div class="section-header">📝 Code Editor</div>
+                <textarea id="code-editor" placeholder="// Write your Banglish code here
+// Example:
+dhori x = 10
+dhori y = 5
+dhori sum = x + y * 2
+dekhao sum
+
+jodi (x > y) tahole {
+    dekhao &quot;x is greater&quot;
+} nahole {
+    dekhao &quot;y is greater or equal&quot;
+}"></textarea>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-header">💻 Output</div>
+                <div id="output">Ready to compile Banglish code! 🎯</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-run" onclick="runCode()">🚀 Run Code</button>
+            <button class="btn btn-clear" onclick="clearEditor()">🗑️ Clear</button>
+            <button class="btn btn-example" onclick="loadExample()">📖 Load Example</button>
+        </div>
+    </div>
+
+    <script>
+        class BanglishCompiler {
+            constructor() {
+                this.variables = {};
+                this.output = [];
+            }
+
+            compile(code) {
+                this.variables = {};
+                this.output = [];
+                
+                try {
+                    // Preprocess code to handle multiline if-else statements
+                    const processedCode = this.preprocessCode(code);
+                    const lines = processedCode.split('\n').filter(line => line.trim() && !line.trim().startsWith('//'));
+                    
+                    for (let i = 0; i < lines.length; i++) {
+                        const line = lines[i].trim();
+                        if (line) {
+                            this.executeLine(line);
+                        }
+                    }
+                    
+                    return {
+                        success: true,
+                        output: this.output.join('\n'),
+                        variables: this.variables
+                    };
+                } catch (error) {
+                    return {
+                        success: false,
+                        error: error.message
+                    };
+                }
+            }
+
+            preprocessCode(code) {
+                // Remove comments first
+                const lines = code.split('\n').map(line => {
+                    const commentIndex = line.indexOf('//');
+                    return commentIndex !== -1 ? line.substring(0, commentIndex) : line;
+                }).filter(line => line.trim());
+
+                let result = [];
+                let i = 0;
+                
+                while (i < lines.length) {
+                    const line = lines[i].trim();
+                    
+                    // Check if this is the start of an if-else block
+                    if (line.includes('jodi') && line.includes('tahole') && line.includes('{')) {
+                        let ifElseBlock = this.parseIfElseBlock(lines, i);
+                        result.push(ifElseBlock.statement);
+                        i = ifElseBlock.nextIndex;
+                    } else {
+                        result.push(line);
+                        i++;
+                    }
+                }
+                
+                return result.join('\n');
+            }
+
+            parseIfElseBlock(lines, startIndex) {
+                let statement = '';
+                let braceCount = 0;
+                let i = startIndex;
+                
+                // Parse the condition and tahole part
+                while (i < lines.length) {
+                    const line = lines[i].trim();
+                    
+                    if (line.includes('jodi') && line.includes('tahole')) {
+                        // Found the condition line
+                        const match = line.match(/jodi\s*\(([^)]+)\)\s*tahole\s*\{/);
+                        if (match) {
+                            statement += `jodi (${match[1]}) tahole {`;
+                            braceCount++;
+                            i++;
+                            break;
+                        }
+                    }
+                    i++;
+                }
+                
+                // Parse the then block with nested structure support
+                while (i < lines.length && braceCount > 0) {
+                    const line = lines[i].trim();
+                    
+                    if (line === '}') {
+                        braceCount--;
+                        if (braceCount === 0) {
+                            statement += '}';
+                            i++;
+                            break;
+                        } else {
+                            statement += ' }';
+                        }
+                    } else if (line === '') {
+                        i++;
+                        continue;
+                    } else if (line.includes('jodi') && line.includes('tahole') && line.includes('{')) {
+                        // Handle nested if-else - parse recursively
+                        const nestedBlock = this.parseIfElseBlock(lines, i);
+                        statement += ' ' + nestedBlock.statement;
+                        i = nestedBlock.nextIndex;
+                        continue;
+                    } else {
+                        statement += ' ' + line;
+                        if (line.includes('{')) {
+                            braceCount++;
+                        }
+                    }
+                    i++;
+                }
+                
+                // Check for nahole (else) block
+                if (i < lines.length && lines[i].trim().includes('nahole')) {
+                    const elseLine = lines[i].trim();
+                    if (elseLine.includes('{')) {
+                        statement += ' nahole {';
+                        braceCount++;
+                        i++;
+                        
+                        // Parse the else block with nested structure support
+                        while (i < lines.length && braceCount > 0) {
+                            const line = lines[i].trim();
+                            
+                            if (line === '}') {
+                                braceCount--;
+                                if (braceCount === 0) {
+                                    statement += '}';
+                                    i++;
+                                    break;
+                                } else {
+                                    statement += ' }';
+                                }
+                            } else if (line === '') {
+                                i++;
+                                continue;
+                            } else if (line.includes('jodi') && line.includes('tahole') && line.includes('{')) {
+                                // Handle nested if-else in else block
+                                const nestedBlock = this.parseIfElseBlock(lines, i);
+                                statement += ' ' + nestedBlock.statement;
+                                i = nestedBlock.nextIndex;
+                                continue;
+                            } else {
+                                statement += ' ' + line;
+                                if (line.includes('{')) {
+                                    braceCount++;
+                                }
+                            }
+                            i++;
+                        }
+                    }
+                }
+                
+                return {
+                    statement: statement,
+                    nextIndex: i
+                };
+            }
+
+            executeLine(line) {
+                // Variable declaration: dhori x = 5
+                if (line.startsWith('dhori ')) {
+                    this.handleVariableDeclaration(line);
+                }
+                // Print statement: dekhao x
+                else if (line.startsWith('dekhao ')) {
+                    this.handlePrint(line);
+                }
+                // If-else statement: jodi (condition) tahole { } nahole { }
+                else if (line.includes('jodi ') && line.includes('tahole')) {
+                    this.handleIfElse(line);
+                }
+                // Assignment: x = 5
+                else if (line.includes(' = ') && !line.startsWith('dhori')) {
+                    this.handleAssignment(line);
+                }
+            }
+
+            handleVariableDeclaration(line) {
+                const match = line.match(/dhori\s+(\w+)\s*=\s*(.+)/);
+                if (match) {
+                    const varName = match[1];
+                    const value = this.evaluateExpression(match[2].trim());
+                    this.variables[varName] = value;
+                } else {
+                    throw new Error(`Invalid variable declaration: ${line}`);
+                }
+            }
+
+            handleAssignment(line) {
+                const match = line.match(/(\w+)\s*=\s*(.+)/);
+                if (match) {
+                    const varName = match[1];
+                    const value = this.evaluateExpression(match[2].trim());
+                    this.variables[varName] = value;
+                } else {
+                    throw new Error(`Invalid assignment: ${line}`);
+                }
+            }
+
+            handlePrint(line) {
+                const expression = line.substring(6).trim(); // Remove 'dekhao '
+                const value = this.evaluateExpression(expression);
+                this.output.push(value.toString());
+            }
+
+            handleIfElse(line) {
+                // Parse if-else: jodi (condition) tahole { statements } nahole { statements }
+                const ifMatch = line.match(/jodi\s*\(([^)]+)\)\s*tahole\s*\{([^}]*)\}(?:\s*nahole\s*\{([^}]*)\})?/);
+                
+                if (ifMatch) {
+                    const condition = ifMatch[1].trim();
+                    const thenBlock = ifMatch[2].trim();
+                    const elseBlock = ifMatch[3] ? ifMatch[3].trim() : '';
+                    
+                    const conditionResult = this.evaluateCondition(condition);
+                    
+                    if (conditionResult) {
+                        if (thenBlock) {
+                            this.executeBlock(thenBlock);
+                        }
+                    } else {
+                        if (elseBlock) {
+                            this.executeBlock(elseBlock);
+                        }
+                    }
+                } else {
+                    throw new Error(`Invalid if-else syntax: ${line}`);
+                }
+            }
+
+            executeBlock(block) {
+                // Handle statements within a block
+                if (!block || !block.trim()) return;
+                
+                // First, handle nested if-else statements
+                if (block.includes('jodi') && block.includes('tahole')) {
+                    // Split the block by nested if-else patterns
+                    const parts = this.splitBlockByStatements(block);
+                    parts.forEach(part => {
+                        if (part.trim()) {
+                            this.executeLine(part.trim());
+                        }
+                    });
+                    return;
+                }
+                
+                // Handle regular statements
+                const statements = this.splitBlockByStatements(block);
+                statements.forEach(stmt => {
+                    if (stmt.trim()) {
+                        this.executeLine(stmt.trim());
+                    }
+                });
+            }
+
+            splitBlockByStatements(block) {
+                const statements = [];
+                const words = block.trim().split(/\s+/);
+                let currentStatement = [];
+                let braceDepth = 0;
+                
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    
+                    // Track brace depth for nested structures
+                    if (word === '{') braceDepth++;
+                    if (word === '}') braceDepth--;
+                    
+                    // Check if this word starts a new statement (only at top level)
+                    if (braceDepth === 0 && (word === 'dekhao' || word === 'dhori' || word === 'jodi') && currentStatement.length > 0) {
+                        // Save the current statement
+                        statements.push(currentStatement.join(' '));
+                        currentStatement = [word];
+                    } else if (braceDepth === 0 && word.match(/^\w+$/) && i + 1 < words.length && words[i + 1] === '=' && currentStatement.length > 0) {
+                        // This is a variable assignment starting, save previous statement
+                        statements.push(currentStatement.join(' '));
+                        currentStatement = [word];
+                    } else {
+                        currentStatement.push(word);
+                    }
+                }
+                
+                // Add the last statement
+                if (currentStatement.length > 0) {
+                    statements.push(currentStatement.join(' '));
+                }
+                
+                return statements;
+            }
+
+            evaluateCondition(condition) {
+                // Handle comparison operators
+                const operators = ['<=', '>=', '==', '!=', '<', '>'];
+                
+                for (const op of operators) {
+                    if (condition.includes(op)) {
+                        const [left, right] = condition.split(op).map(s => s.trim());
+                        const leftVal = this.evaluateExpression(left);
+                        const rightVal = this.evaluateExpression(right);
+                        
+                        switch (op) {
+                            case '==': return leftVal == rightVal;
+                            case '!=': return leftVal != rightVal;
+                            case '<': return leftVal < rightVal;
+                            case '>': return leftVal > rightVal;
+                            case '<=': return leftVal <= rightVal;
+                            case '>=': return leftVal >= rightVal;
+                        }
+                    }
+                }
+                
+                // If no comparison operator, treat as boolean expression
+                return Boolean(this.evaluateExpression(condition));
+            }
+
+            evaluateExpression(expr) {
+                expr = expr.trim();
+                
+                // Handle string literals
+                if ((expr.startsWith('"') && expr.endsWith('"')) || 
+                    (expr.startsWith("'") && expr.endsWith("'"))) {
+                    return expr.slice(1, -1);
+                }
+                
+                // Handle numbers
+                if (!isNaN(expr) && !isNaN(parseFloat(expr))) {
+                    return parseFloat(expr);
+                }
+                
+                // Handle variables
+                if (this.variables.hasOwnProperty(expr)) {
+                    return this.variables[expr];
+                }
+                
+                // Handle arithmetic expressions with proper precedence
+                return this.evaluateArithmetic(expr);
+            }
+
+            evaluateArithmetic(expr) {
+                // Remove spaces
+                expr = expr.replace(/\s/g, '');
+                
+                // Replace variables with their values
+                const varNames = Object.keys(this.variables);
+                varNames.forEach(varName => {
+                    const regex = new RegExp(`\\b${varName}\\b`, 'g');
+                    expr = expr.replace(regex, this.variables[varName].toString());
+                });
+                
+                try {
+                    // Use a safe arithmetic evaluator with proper precedence
+                    return this.safeEval(expr);
+                } catch (error) {
+                    throw new Error(`Invalid expression: ${expr}`);
+                }
+            }
+
+            safeEval(expr) {
+                // Handle parentheses first
+                while (expr.includes('(')) {
+                    const start = expr.lastIndexOf('(');
+                    const end = expr.indexOf(')', start);
+                    if (end === -1) throw new Error('Unmatched parentheses');
+                    
+                    const inner = expr.substring(start + 1, end);
+                    const result = this.evaluateSimpleExpression(inner);
+                    expr = expr.substring(0, start) + result + expr.substring(end + 1);
+                }
+                
+                return this.evaluateSimpleExpression(expr);
+            }
+
+            evaluateSimpleExpression(expr) {
+                // Handle multiplication and division first (higher precedence)
+                let tokens = this.tokenize(expr);
+                
+                // Process *, /, % (left to right)
+                for (let i = 1; i < tokens.length - 1; i += 2) {
+                    if (tokens[i] === '*' || tokens[i] === '/' || tokens[i] === '%') {
+                        const left = parseFloat(tokens[i - 1]);
+                        const right = parseFloat(tokens[i + 1]);
+                        
+                        // Check for valid numbers
+                        if (isNaN(left) || isNaN(right)) {
+                            throw new Error(`Invalid operands: ${tokens[i - 1]} ${tokens[i]} ${tokens[i + 1]}`);
+                        }
+                        
+                        let result;
+                        switch (tokens[i]) {
+                            case '*': result = left * right; break;
+                            case '/': 
+                                if (right === 0) throw new Error('Division by zero');
+                                result = left / right; 
+                                break;
+                            case '%': result = left % right; break;
+                        }
+                        
+                        tokens.splice(i - 1, 3, result.toString());
+                        i -= 2;
+                    }
+                }
+                
+                // Process +, - (left to right)
+                for (let i = 1; i < tokens.length - 1; i += 2) {
+                    if (tokens[i] === '+' || tokens[i] === '-') {
+                        const left = parseFloat(tokens[i - 1]);
+                        const right = parseFloat(tokens[i + 1]);
+                        
+                        // Check for valid numbers
+                        if (isNaN(left) || isNaN(right)) {
+                            throw new Error(`Invalid operands: ${tokens[i - 1]} ${tokens[i]} ${tokens[i + 1]}`);
+                        }
+                        
+                        const result = tokens[i] === '+' ? left + right : left - right;
+                        
+                        tokens.splice(i - 1, 3, result.toString());
+                        i -= 2;
+                    }
+                }
+                
+                const finalResult = parseFloat(tokens[0]);
+                if (isNaN(finalResult)) {
+                    throw new Error(`Invalid expression result: ${tokens[0]}`);
+                }
+                
+                return finalResult;
+            }
+
+            tokenize(expr) {
+                const tokens = [];
+                let current = '';
+                
+                for (let i = 0; i < expr.length; i++) {
+                    const char = expr[i];
+                    
+                    // Handle negative numbers - if we see a minus and it's at the start 
+                    // or follows an operator, treat it as part of the number
+                    if (char === '-' && (i === 0 || '+-*/()'.includes(expr[i-1]))) {
+                        current += char;
+                    } else if ('+-*/%'.includes(char)) {
+                        if (current) {
+                            tokens.push(current);
+                            current = '';
+                        }
+                        tokens.push(char);
+                    } else {
+                        current += char;
+                    }
+                }
+                
+                if (current) {
+                    tokens.push(current);
+                }
+                
+                return tokens;
+            }
+        }
+
+        const compiler = new BanglishCompiler();
+
+        function runCode() {
+            const code = document.getElementById('code-editor').value;
+            const outputDiv = document.getElementById('output');
+            
+            if (!code.trim()) {
+                outputDiv.innerHTML = '<span class="error">❌ No code to run!</span>';
+                return;
+            }
+            
+            outputDiv.innerHTML = '<span class="success">🔄 Compiling...</span>';
+            
+            setTimeout(() => {
+                const result = compiler.compile(code);
+                
+                if (result.success) {
+                    let output = '<span class="success">✅ Compilation successful!</span>\n\n';
+                    
+                    if (result.output) {
+                        output += '<strong>📤 Output:</strong>\n' + result.output;
+                    } else {
+                        output += '<strong>� Output:</strong>\n(No output generated)';
+                    }
+                    
+                    outputDiv.innerHTML = output;
+                } else {
+                    outputDiv.innerHTML = `<span class="error">❌ Compilation failed!</span>\n\n<strong>Error:</strong>\n${result.error}`;
+                }
+            }, 500);
+        }
+
+        function clearEditor() {
+            document.getElementById('code-editor').value = '';
+            document.getElementById('output').innerHTML = 'Ready to compile Banglish code! 🎯';
+        }
+
+        function loadExample() {
+            const example = `// Simple Banglish Programming Example
+dhori x = 10
+dhori y = 5
+
+// Basic arithmetic
+dhori sum = x + y
+dhori difference = x - y
+
+dekhao "First number:"
+dekhao x
+dekhao "Second number:"
+dekhao y
+
+dekhao "Sum:"
+dekhao sum
+dekhao "Difference:"
+dekhao difference
+
+// Simple if-else condition
+jodi (x > y) tahole {
+    dekhao "x is greater than y"
+} nahole {
+    dekhao "y is greater than or equal to x"
+}
+
+// Check if sum is even or odd
+dhori remainder = sum % 2
+jodi (remainder == 0) tahole {
+    dekhao "Sum is even"
+} nahole {
+    dekhao "Sum is odd"
+}`;
+
+            document.getElementById('code-editor').value = example;
+        }
+
+        // Load example on page load
+        window.onload = function() {
+            // Start with clean editor
+            document.getElementById('output').innerHTML = 'Ready to compile Banglish code! 🎯';
+        };
+    </script>
+</body>
+</html>
