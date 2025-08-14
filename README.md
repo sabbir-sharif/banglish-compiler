@@ -207,7 +207,7 @@ jodi (age < 13) tahole {
 
 
 
-### Example 10: BMI Calculator
+### Example 5: BMI Calculator
 
 ```banglish
 // BMI Calculator with health recommendations
