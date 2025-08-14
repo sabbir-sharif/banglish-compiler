@@ -132,36 +132,8 @@ dekhao "Quotient:"
 dekhao quotient
 ```
 
-### Example 2: Grade Calculator
 
-```banglish
-// Grade calculator with nested conditions
-dhori math = 85
-dhori science = 92
-dhori english = 78
-
-dhori total = math + science + english
-dhori average = total / 3
-
-dekhao "Average marks:"
-dekhao average
-
-jodi (average >= 90) tahole {
-    dekhao "Grade: A+"
-} nahole {
-    jodi (average >= 80) tahole {
-        dekhao "Grade: A"
-    } nahole {
-        jodi (average >= 70) tahole {
-            dekhao "Grade: B"
-        } nahole {
-            dekhao "Grade: C"
-        }
-    }
-}
-```
-
-### Example 3: Temperature Converter
+### Example 2: Temperature Converter
 
 ```banglish
 // Celsius to Fahrenheit converter
@@ -176,15 +148,11 @@ dekhao fahrenheit
 jodi (celsius > 30) tahole {
     dekhao "Hot weather!"
 } nahole {
-    jodi (celsius > 15) tahole {
-        dekhao "Pleasant weather"
-    } nahole {
-        dekhao "Cold weather!"
-    }
+    dekhao "Pleasant weather"
 }
 ```
 
-### Example 4: Shopping Bill Calculator
+### Example 3: Shopping Bill Calculator
 
 ```banglish
 // Shopping bill with discount and tax
@@ -217,7 +185,7 @@ jodi (final_total > 300) tahole {
 }
 ```
 
-### Example 5: Age Category Checker
+### Example 4: Age Category Checker
 
 ```banglish
 // Age category with multiple conditions
@@ -231,207 +199,13 @@ dekhao age
 jodi (age < 13) tahole {
     dekhao "You are a child"
 } nahole {
-    jodi (age < 20) tahole {
-        dekhao "You are a teenager"
-        jodi (age >= 18) tahole {
-            dekhao "You can vote!"
-        } nahole {
-            dekhao "Too young to vote"
-        }
-    } nahole {
-        jodi (age < 60) tahole {
-            dekhao "You are an adult"
-            dhori retirement_years = 60 - age
-            dekhao "Years to retirement:"
-            dekhao retirement_years
-        } nahole {
-            dekhao "You are a senior citizen"
-        }
-    }
+    dekhao "You are a teenager"
 }
 ```
 
-### Example 6: Number Analysis
 
-```banglish
-// Comprehensive number analysis
-dhori number = -15
 
-dekhao "Analyzing number:"
-dekhao number
 
-// Check positive/negative/zero
-jodi (number > 0) tahole {
-    dekhao "Number is positive"
-    
-    // Check even/odd for positive numbers
-    dhori remainder = number % 2
-    jodi (remainder == 0) tahole {
-        dekhao "Number is even"
-    } nahole {
-        dekhao "Number is odd"
-    }
-    
-    // Check if it's a perfect square
-    dhori sqrt_approx = number / 2
-    dhori square_check = sqrt_approx * sqrt_approx
-    jodi (square_check == number) tahole {
-        dekhao "Might be a perfect square"
-    }
-    
-} nahole {
-    jodi (number < 0) tahole {
-        dekhao "Number is negative"
-        dhori absolute_value = number * -1
-        dekhao "Absolute value:"
-        dekhao absolute_value
-    } nahole {
-        dekhao "Number is zero"
-    }
-}
-```
-
-### Example 7: Loan Interest Calculator
-
-```banglish
-// Loan calculator with different interest rates
-dhori principal = 100000
-dhori years = 5
-
-dekhao "Loan Calculator"
-dekhao "Principal amount:"
-dekhao principal
-dekhao "Loan period (years):"
-dekhao years
-
-// Different rates based on loan amount
-dhori interest_rate = 0
-jodi (principal > 500000) tahole {
-    interest_rate = 12
-    dekhao "High amount - Interest rate: 12%"
-} nahole {
-    jodi (principal > 100000) tahole {
-        interest_rate = 10
-        dekhao "Medium amount - Interest rate: 10%"
-    } nahole {
-        interest_rate = 8
-        dekhao "Small amount - Interest rate: 8%"
-    }
-}
-
-dhori simple_interest = principal * interest_rate * years / 100
-dhori total_amount = principal + simple_interest
-dhori monthly_payment = total_amount / (years * 12)
-
-dekhao "Simple Interest:"
-dekhao simple_interest
-dekhao "Total Amount:"
-dekhao total_amount
-dekhao "Monthly Payment:"
-dekhao monthly_payment
-```
-
-### Example 8: Fuel Efficiency Calculator
-
-```banglish
-// Car fuel efficiency analysis
-dhori distance_traveled = 500
-dhori fuel_used = 25
-dhori fuel_price_per_liter = 120
-
-dhori mileage = distance_traveled / fuel_used
-dhori total_fuel_cost = fuel_used * fuel_price_per_liter
-dhori cost_per_km = total_fuel_cost / distance_traveled
-
-dekhao "Trip Analysis:"
-dekhao "Distance traveled (km):"
-dekhao distance_traveled
-dekhao "Fuel used (liters):"
-dekhao fuel_used
-
-dekhao "Fuel efficiency (km/l):"
-dekhao mileage
-
-dekhao "Total fuel cost:"
-dekhao total_fuel_cost
-dekhao "Cost per km:"
-dekhao cost_per_km
-
-// Efficiency rating
-jodi (mileage > 20) tahole {
-    dekhao "Excellent fuel efficiency!"
-} nahole {
-    jodi (mileage > 15) tahole {
-        dekhao "Good fuel efficiency"
-    } nahole {
-        jodi (mileage > 10) tahole {
-            dekhao "Average fuel efficiency"
-        } nahole {
-            dekhao "Poor fuel efficiency - consider a more efficient vehicle"
-        }
-    }
-}
-```
-
-### Example 9: Number Guessing Game Logic
-
-```banglish
-// Number guessing game mechanics
-dhori secret_number = 42
-dhori player_guess = 35
-dhori attempts = 3
-
-dekhao "Number Guessing Game"
-dekhao "Secret number (hidden):"
-dekhao secret_number
-dekhao "Your guess:"
-dekhao player_guess
-dekhao "Attempts remaining:"
-dekhao attempts
-
-jodi (player_guess == secret_number) tahole {
-    dekhao "🎉 Congratulations! You guessed correctly!"
-    dhori bonus_points = attempts * 10
-    dekhao "Bonus points:"
-    dekhao bonus_points
-} nahole {
-    jodi (player_guess < secret_number) tahole {
-        dhori difference = secret_number - player_guess
-        dekhao "📈 Too low! Try a higher number"
-        dekhao "You were off by:"
-        dekhao difference
-        
-        jodi (difference <= 5) tahole {
-            dekhao "Very close!"
-        } nahole {
-            jodi (difference <= 15) tahole {
-                dekhao "Getting warmer"
-            } nahole {
-                dekhao "Way off!"
-            }
-        }
-    } nahole {
-        dhori difference = player_guess - secret_number
-        dekhao "📉 Too high! Try a lower number"
-        dekhao "You were off by:"
-        dekhao difference
-        
-        jodi (difference <= 5) tahole {
-            dekhao "Very close!"
-        } nahole {
-            jodi (difference <= 15) tahole {
-                dekhao "Getting warmer"
-            } nahole {
-                dekhao "Way off!"
-            }
-        }
-    }
-}
-
-dhori remaining_attempts = attempts - 1
-dekhao "Attempts left:"
-dekhao remaining_attempts
-```
 
 ### Example 10: BMI Calculator
 
@@ -457,18 +231,9 @@ jodi (bmi < 18.5) tahole {
     dekhao "Category: Underweight"
     dekhao "Recommendation: Consider gaining healthy weight"
 } nahole {
-    jodi (bmi < 25) tahole {
+    
         dekhao "Category: Normal weight"
         dekhao "Recommendation: Maintain current weight"
-    } nahole {
-        jodi (bmi < 30) tahole {
-            dekhao "Category: Overweight"
-            dekhao "Recommendation: Consider losing some weight"
-        } nahole {
-            dekhao "Category: Obese"
-            dekhao "Recommendation: Consult a healthcare provider"
-        }
-    }
 }
 
 // Calculate ideal weight range (for height)
@@ -479,28 +244,6 @@ dekhao "Ideal weight range:"
 dekhao ideal_weight_min
 dekhao "to"
 dekhao ideal_weight_max
-```
-
-## 🔧 Advanced Features
-
-### Nested If-Else Statements
-
-Banglish supports unlimited nesting of conditional statements:
-
-```banglish
-jodi (condition1) tahole {
-    jodi (condition2) tahole {
-        jodi (condition3) tahole {
-            dekhao "All conditions true"
-        } nahole {
-            dekhao "Only first two conditions true"
-        }
-    } nahole {
-        dekhao "Only first condition true"
-    }
-} nahole {
-    dekhao "First condition false"
-}
 ```
 
 ### Complex Arithmetic
@@ -660,6 +403,12 @@ This project is open source and available under the MIT License.
 
 ---
 
+## 🔧 Future Work
+
+### Nested If-Else Statements
+### Loop
+### Array
+
 **Happy Coding with Banglish! 🎉**
 
-*Made with ❤️ for the Bengali programming community*
+*Made with ❤️ *
